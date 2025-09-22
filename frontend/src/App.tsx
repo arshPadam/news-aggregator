@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { fetchArticles } from "./services/api";
+import ArticleList from "./components/ArticleList";
 
-function App() {
+const App: React.FC = () => {
+  const [query, setQuery] = useState("AI");
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    setLoading(true);
+    const data = await fetchArticles(query);
+    setArticles(data);
+    setLoading(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: 20 }}>
+      <h1>News Aggregator MVP</h1>
+      <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Enter keyword"
+      />
+      <button onClick={handleSearch} style={{ marginLeft: 8 }}>
+        Search
+      </button>
+
+      {loading ? <p>Loading...</p> : <ArticleList articles={articles} />}
     </div>
   );
-}
+};
 
 export default App;
